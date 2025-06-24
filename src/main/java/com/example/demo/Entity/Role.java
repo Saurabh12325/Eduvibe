@@ -1,4 +1,6 @@
 package com.example.demo.Entity;
 
-public class Role {
+public enum Role {
+    Teacher,
+    Student
 }
