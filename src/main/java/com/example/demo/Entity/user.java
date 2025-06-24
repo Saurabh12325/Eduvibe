@@ -13,13 +13,16 @@ public class user {
     private int id;
     private String username;
     private String password;
+    private String mobileNumber;
     @Column(unique = true, nullable = false)
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
     @Enumerated(EnumType.STRING)
     private Provider provider;
+    private String otp;
+    private LocalDateTime otpGeneratedAt;
+    private boolean isEmailVerified;
 
-    private LocalDateTime createdAt;
 
 }
