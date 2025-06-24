@@ -23,6 +23,7 @@ public class User {
     private String otp;
     private LocalDateTime otpGeneratedAt;
     private boolean isEmailVerified;
+    private LocalDateTime createdAt;
 
 
 }
