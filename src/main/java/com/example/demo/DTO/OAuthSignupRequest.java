@@ -8,5 +8,5 @@ public class OAuthSignupRequest {
     private String email;
     private String username;
     private Provider provider; // GOOGLE or GITHUB
-    private String oauthToken;
+
 }
