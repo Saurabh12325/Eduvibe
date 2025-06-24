@@ -1,11 +1,11 @@
 package com.example.demo.Mapper;
 
 import com.example.demo.DTO.SignUpRequest;
-import com.example.demo.Entity.user;
+import com.example.demo.Entity.User;
 
 public class mappper {
 
-    public SignUpRequest mapToDto(user user , SignUpRequest signUpRequest) {
+    public SignUpRequest mapToDto(User user , SignUpRequest signUpRequest) {
 
         signUpRequest.setUsername(user.getUsername());
         signUpRequest.setPassword(user.getPassword());
