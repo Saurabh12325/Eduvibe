@@ -10,9 +10,9 @@ public class emailService {
       @Autowired
       private JavaMailSender mailSender;
 
-    public void sendOtpEmail(String toEmail, String otp) {
+    public void sendOtpEmail(String Email, String otp) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(toEmail);
+        message.setTo(Email);
         message.setSubject("Your OTP Code");
         message.setText("Your OTP is: " + otp);
         mailSender.send(message);
