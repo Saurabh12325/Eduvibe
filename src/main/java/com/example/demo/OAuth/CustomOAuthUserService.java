@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 @Component
 @AllArgsConstructor
+
 public class CustomOAuthUserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final UserRepository userRepository;
     @Override

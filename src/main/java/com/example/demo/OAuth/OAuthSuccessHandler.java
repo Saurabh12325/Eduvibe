@@ -21,6 +21,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     private JwtUtils jwtUtils;
+
     private ObjectMapper objectMapper;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {

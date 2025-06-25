@@ -1,21 +1,28 @@
 package com.example.demo.Configuration;
 
 import com.example.demo.JWT.JwtAuthenticationFilter;
+import com.example.demo.OAuth.CustomOAuthUserService;
+import com.example.demo.OAuth.OAuthSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig  {
-
+    private final CustomOAuthUserService oAuth2UserService;
+    private final OAuthSuccessHandler oAuthSuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(CustomOAuthUserService oAuth2UserService, OAuthSuccessHandler oAuthSuccessHandler, JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.oAuth2UserService = oAuth2UserService;
+        this.oAuthSuccessHandler = oAuthSuccessHandler;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
@@ -30,7 +37,7 @@ public class SecurityConfig  {
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2UserService)
                         )
-                        .successHandler(successHandler)
+                        .successHandler(oAuthSuccessHandler)
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -38,4 +45,8 @@ public class SecurityConfig  {
         return http.build();
 
 }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }
