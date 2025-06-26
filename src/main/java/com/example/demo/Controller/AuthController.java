@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import com.example.demo.DTO.OtpVerifyRequest;
 import com.example.demo.DTO.SignUpRequest;
 import com.example.demo.Entity.User;
 import com.example.demo.Service.StudentService;
@@ -20,6 +21,10 @@ public class AuthController {
     public String register(@RequestBody SignUpRequest request){
   return studentService.signUp(request);
     }
-
+    @PostMapping("/verify-otp")
+    public ResponseEntity<String> verifyOtp(@RequestBody OtpVerifyRequest request) {
+        studentService.verifyOtp(request.getEmail(), request.getOtp());
+        return ResponseEntity.ok("OTP verified successfully.");
+    }
 
 }

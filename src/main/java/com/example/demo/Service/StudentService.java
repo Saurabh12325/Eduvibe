@@ -29,42 +29,59 @@ public class StudentService implements UserService {
     public String login(LoginRequest loginRequest) {
       return null;
     }
-
     @Override
     public String signUp(SignUpRequest request) {
         Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
-       if(optionalUser.isPresent()) {
-           User user = optionalUser.get();
-           if (user.isEmailVerified()) {
-               throw new RuntimeException("User already registered. Please log in.");
-           }
 
-           else if (!request.getOtp().equals(user.getOtp())) {
-               throw new RuntimeException("Invalid OTP");
-           }
-          else if (user.getOtpGeneratedAt() == null ||
-                   Duration.between(user.getOtpGeneratedAt(), LocalDateTime.now()).toMinutes() > 5) {
-               throw new RuntimeException("OTP expired. Please request a new one.");
-           }
-           user.setUsername(request.getUsername());
-           user.setPassword(passwordEncoder.encode(request.getPassword()));
-           user.setMobileNumber(request.getMobileNumber());
-           user.setRole(request.getRole());
-           user.setEmailVerified(true);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            verifyOtp(request.getEmail(), request.getOtp());
 
-           user.setCreatedAt(LocalDateTime.now());
+            user.setUsername(request.getUsername());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setMobileNumber(request.getMobileNumber());
+            user.setRole(request.getRole());
+            user.setCreatedAt(LocalDateTime.now());
 
-           userRepository.save(user);
+            userRepository.save(user);
 
-           String token = jwtUtils.generateToken(user.getEmail());
-           return "User registered successfully. Token: " + token;
+            String token = jwtUtils.generateToken(user.getEmail());
+            return "User registered successfully. Token: " + token;
+        }
 
-       }
         sendOtp.sendOtpToEmail(request.getEmail());
-        return "OTP sent to your email. Please verify to complete signup.";
 
+        return "OTP sent to your email. Please verify to complete signup.";
     }
 
-       }
+
+    public void verifyOtp(String email, String requestOtp) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("User with this email does not exist.");
+        }
+
+        User user = optionalUser.get();
+
+        if (user.isEmailVerified()) {
+            throw new RuntimeException("Email already verified.");
+        }
+
+        if (!requestOtp.equals(user.getOtp())) {
+            throw new RuntimeException("Invalid OTP.");
+        }
+
+        if (user.getOtpGeneratedAt() == null ||
+                Duration.between(user.getOtpGeneratedAt(), LocalDateTime.now()).toMinutes() > 5) {
+            throw new RuntimeException("OTP expired. Please request a new one.");
+        }
+
+        user.setEmailVerified(true);
+        userRepository.save(user);
+    }
+
+
+}
 
 
