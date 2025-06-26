@@ -38,13 +38,13 @@ public class StudentService implements UserService {
            if (user.isEmailVerified()) {
                throw new RuntimeException("User already registered. Please log in.");
            }
-           if (request.getOtp() == null || request.getOtp().isEmpty()) {
-               return "OTP already sent. Please enter the OTP to verify.";
-           }
-           if (!request.getOtp().equals(user.getOtp())) {
+//           else if (request.getOtp() == null || request.getOtp().isEmpty()) {
+//               return "OTP already sent. Please enter the OTP to verify.";
+//           }
+           else if (!request.getOtp().equals(user.getOtp())) {
                throw new RuntimeException("Invalid OTP");
            }
-           if (user.getOtpGeneratedAt() == null ||
+          else if (user.getOtpGeneratedAt() == null ||
                    Duration.between(user.getOtpGeneratedAt(), LocalDateTime.now()).toMinutes() > 5) {
                throw new RuntimeException("OTP expired. Please request a new one.");
            }
