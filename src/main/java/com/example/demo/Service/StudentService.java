@@ -91,6 +91,32 @@ public class StudentService implements UserService {
 
 
     }
+    public String resendOtp(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("User not registered.");
+        }
+
+        User user = optionalUser.get();
+
+        if (user.isEmailVerified()) {
+            return "Email already verified.";
+        }
+        if (user.getOtpGeneratedAt() != null &&
+                Duration.between(user.getOtpGeneratedAt(), LocalDateTime.now()).toMinutes() < 5) {
+            long remainingTime = 5 - Duration.between(user.getOtpGeneratedAt(), LocalDateTime.now()).toMinutes();
+            return "Please wait " + remainingTime + " more minute(s) before resending OTP.";
+        }
+        String newOtp = sendOtp.generateOtp();
+        user.setOtp(newOtp);
+        user.setOtpGeneratedAt(LocalDateTime.now());
+        userRepository.save(user);
+
+        emailService.sendOtpEmail(email, newOtp);
+        return "New OTP sent to your email.";
+    }
+
 
 
 }

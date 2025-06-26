@@ -7,10 +7,8 @@ import com.example.demo.Service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 @RequestMapping("/api/auth")
 @RestController
 @RequiredArgsConstructor
@@ -19,12 +17,17 @@ public class AuthController {
 
  @PostMapping("/register")
     public String register(@RequestBody SignUpRequest request){
-  return studentService.signUp(request);
+        return studentService.signUp(request);
     }
-    @PostMapping("/verify-otp")
+    @PatchMapping("/verify-otp")
     public ResponseEntity<String> verifyOtp(@RequestBody OtpVerifyRequest request) {
         studentService.verifyOtp(request.getEmail(), request.getOtp());
         return ResponseEntity.ok("OTP verified successfully.");
     }
+    @PostMapping("/resend-otp")
+    public ResponseEntity<String> resendOtp(@RequestParam String email) {
+        return ResponseEntity.ok(studentService.resendOtp(email));
+    }
+
 
 }
