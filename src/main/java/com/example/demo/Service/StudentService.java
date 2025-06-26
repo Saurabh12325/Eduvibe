@@ -38,9 +38,7 @@ public class StudentService implements UserService {
            if (user.isEmailVerified()) {
                throw new RuntimeException("User already registered. Please log in.");
            }
-//           else if (request.getOtp() == null || request.getOtp().isEmpty()) {
-//               return "OTP already sent. Please enter the OTP to verify.";
-//           }
+
            else if (!request.getOtp().equals(user.getOtp())) {
                throw new RuntimeException("Invalid OTP");
            }
@@ -53,6 +51,7 @@ public class StudentService implements UserService {
            user.setMobileNumber(request.getMobileNumber());
            user.setRole(request.getRole());
            user.setEmailVerified(true);
+
            user.setCreatedAt(LocalDateTime.now());
 
            userRepository.save(user);

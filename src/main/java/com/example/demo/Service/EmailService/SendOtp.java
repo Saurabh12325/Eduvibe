@@ -18,9 +18,11 @@ public class SendOtp {
     @Autowired
     private UserRepository userRepository;
 
-
+    public String generateOtp() {
+        return String.valueOf(new Random().nextInt(900000) + 100000);
+    }
     public String sendOtpToEmail(String email) {
-        String otp = String.valueOf(new Random().nextInt(900000) + 100000);
+        String otp = generateOtp();
         Optional<User> optionalUser = userRepository.findByEmail(email);
 
         User user = optionalUser.orElseGet(User::new);
