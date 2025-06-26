@@ -2,12 +2,15 @@ package com.example.demo.Service;
 
 import com.example.demo.DTO.LoginRequest;
 import com.example.demo.DTO.SignUpRequest;
+import com.example.demo.Entity.Provider;
 import com.example.demo.Entity.User;
 import com.example.demo.JWT.JwtUtils;
 import com.example.demo.Repository.UserRepository;
+import com.example.demo.Service.EmailService.EmailService;
 import com.example.demo.Service.EmailService.SendOtp;
 import com.example.demo.Service.impl.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,9 @@ public class StudentService implements UserService {
     private final SendOtp sendOtp;
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+
+
 
     @Override
     public String login(LoginRequest loginRequest) {
@@ -32,30 +38,33 @@ public class StudentService implements UserService {
     @Override
     public String signUp(SignUpRequest request) {
         Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
+        String otp = sendOtp.generateOtp();
+        if (optionalUser.isEmpty()) {
+            User user = optionalUser.orElseGet(User::new);
 
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            verifyOtp(request.getEmail(), request.getOtp());
-
+            user.setOtp(otp);
+            user.setEmail(request.getEmail());
+            user.setOtpGeneratedAt(LocalDateTime.now());
             user.setUsername(request.getUsername());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setMobileNumber(request.getMobileNumber());
             user.setRole(request.getRole());
+            user.setProvider(Provider.Local);
             user.setCreatedAt(LocalDateTime.now());
 
             userRepository.save(user);
-
+            emailService.sendOtpEmail(request.getEmail(),otp);
             String token = jwtUtils.generateToken(user.getEmail());
-            return "User registered successfully. Token: " + token;
+            return "OTP sent to your email. Please verify to complete signup. " + token;
+
+
         }
 
-        sendOtp.sendOtpToEmail(request.getEmail());
+        return "User Already register Log in ";
 
-        return "OTP sent to your email. Please verify to complete signup.";
     }
 
-
-    public void verifyOtp(String email, String requestOtp) {
+    public User verifyOtp(String email, String requestOtp) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) {
@@ -78,7 +87,9 @@ public class StudentService implements UserService {
         }
 
         user.setEmailVerified(true);
-        userRepository.save(user);
+       return userRepository.save(user);
+
+
     }
 
 

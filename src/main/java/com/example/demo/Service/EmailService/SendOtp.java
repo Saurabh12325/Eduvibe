@@ -13,10 +13,11 @@ import java.util.Random;
 @Service
 public class SendOtp {
     @Autowired
-    private emailService emailService;
+    private EmailService emailService;
 
     @Autowired
     private UserRepository userRepository;
+
 
 
     public String generateOtp() {
