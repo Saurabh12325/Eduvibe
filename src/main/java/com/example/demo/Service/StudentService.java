@@ -60,7 +60,7 @@ public class StudentService implements UserService {
 
         }
 
-        return "User Already register Log in ";
+        return "User Already register or email not Verified kindly resend OTP";
 
     }
 

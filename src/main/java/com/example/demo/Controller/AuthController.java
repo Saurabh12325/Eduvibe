@@ -3,6 +3,7 @@ package com.example.demo.Controller;
 import com.example.demo.DTO.OtpVerifyRequest;
 import com.example.demo.DTO.SignUpRequest;
 import com.example.demo.Entity.User;
+import com.example.demo.Repository.UserRepository;
 import com.example.demo.Service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,8 +15,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final StudentService studentService;
+    private final UserRepository userRepository;
 
- @PostMapping("/register")
+    @PostMapping("/register")
     public String register(@RequestBody SignUpRequest request){
         return studentService.signUp(request);
     }
@@ -27,6 +29,13 @@ public class AuthController {
     @PostMapping("/resend-otp")
     public ResponseEntity<String> resendOtp(@RequestParam String email) {
         return ResponseEntity.ok(studentService.resendOtp(email));
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<String> logout() {
+      userRepository.deleteAll();
+      return new ResponseEntity<>("Logout successful", HttpStatus.OK);
+
     }
 
 
