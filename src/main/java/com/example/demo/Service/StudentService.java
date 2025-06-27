@@ -10,7 +10,7 @@ import com.example.demo.Service.EmailService.EmailService;
 import com.example.demo.Service.EmailService.SendOtp;
 import com.example.demo.Service.impl.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,10 +32,6 @@ public class StudentService implements UserService {
 
 
     @Override
-    public String login(LoginRequest loginRequest) {
-      return null;
-    }
-    @Override
     public String signUp(SignUpRequest request) {
         Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
         String otp = sendOtp.generateOtp();
@@ -51,16 +47,18 @@ public class StudentService implements UserService {
             user.setRole(request.getRole());
             user.setProvider(Provider.Local);
             user.setCreatedAt(LocalDateTime.now());
-
             userRepository.save(user);
             emailService.sendOtpEmail(request.getEmail(),otp);
-            String token = jwtUtils.generateToken(user.getEmail());
-            return "OTP sent to your email. Please verify to complete signup. " + token;
+
+            return "OTP sent to your email. Please verify to complete signup. ";
 
 
         }
+        else if (!optionalUser.get().isEmailVerified()) {
+            return "Please verify your email with otp";
+        }
 
-        return "User Already register or email not Verified kindly resend OTP";
+        return "User Already register Please login";
 
     }
 
@@ -112,12 +110,21 @@ public class StudentService implements UserService {
         user.setOtp(newOtp);
         user.setOtpGeneratedAt(LocalDateTime.now());
         userRepository.save(user);
-
         emailService.sendOtpEmail(email, newOtp);
         return "New OTP sent to your email.";
     }
 
 
+    @Override
+    public ResponseEntity<?> login(LoginRequest loginRequest) {
+        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new RuntimeException("User not found with this email"));
+        if (user.isEmailVerified() && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            String token = jwtUtils.generateToken(user.getEmail());
+            return new ResponseEntity<>(token, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Invalid credentials", HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }
 

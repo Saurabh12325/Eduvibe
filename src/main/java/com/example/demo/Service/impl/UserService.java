@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface UserService {
 
-    public String login(LoginRequest loginRequest);
-    public String signUp(SignUpRequest signUpRequest);
+      ResponseEntity<?> login(LoginRequest loginRequest);
+    String signUp(SignUpRequest signUpRequest);
 
 }
