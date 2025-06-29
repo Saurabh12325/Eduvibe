@@ -85,6 +85,7 @@ public class StudentService implements UserService {
         }
 
         user.setEmailVerified(true);
+        emailService.sendRegistrationEmail(email);
        return userRepository.save(user);
 
 

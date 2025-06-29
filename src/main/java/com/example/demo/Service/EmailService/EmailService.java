@@ -3,6 +3,8 @@ package com.example.demo.Service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMailMessage;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,4 +19,13 @@ public class EmailService {
         message.setText("Your OTP is: " + otp);
         mailSender.send(message);
     }
+
+    public void sendRegistrationEmail(String email) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Registration Confirmation");
+        message.setText("You have successfully registered. Welcome! to our platform.");
+        mailSender.send(message);
+    }
+
 }
