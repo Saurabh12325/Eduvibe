@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class StudentService implements UserService {
+public class AuthService implements UserService {
 
     private final UserRepository userRepository;
     private final SendOtp sendOtp;

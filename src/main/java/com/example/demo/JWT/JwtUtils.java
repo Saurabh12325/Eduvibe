@@ -17,6 +17,7 @@ public class JwtUtils {
     private int jwtExpiration;
 
     public String generateToken(String email) {
+
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())

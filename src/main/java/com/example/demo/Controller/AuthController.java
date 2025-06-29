@@ -5,21 +5,20 @@ import com.example.demo.DTO.OtpVerifyRequest;
 import com.example.demo.DTO.SignUpRequest;
 import com.example.demo.Entity.User;
 import com.example.demo.Repository.UserRepository;
-import com.example.demo.Service.StudentService;
+import com.example.demo.Service.AuthService;
+
 import lombok.RequiredArgsConstructor;
 import org.hibernate.mapping.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Objects;
 
 @RequestMapping("/api/auth")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
-    private final StudentService studentService;
+    private final AuthService studentService;
     private final UserRepository userRepository;
 
     @PostMapping("/register")
@@ -46,6 +45,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
        return  ResponseEntity.ok(studentService.login(loginRequest)) ;
     }
+
 
 
 }
