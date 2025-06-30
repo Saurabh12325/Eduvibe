@@ -3,6 +3,7 @@ package com.example.demo.Service;
 import com.example.demo.DTO.LoginRequest;
 import com.example.demo.DTO.SignUpRequest;
 import com.example.demo.Entity.Provider;
+import com.example.demo.Entity.Role;
 import com.example.demo.Entity.User;
 import com.example.demo.JWT.JwtUtils;
 import com.example.demo.Repository.UserRepository;
@@ -44,7 +45,7 @@ public class AuthService implements UserService {
             user.setUsername(request.getUsername());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setMobileNumber(request.getMobileNumber());
-            user.setRole(request.getRole());
+            user.setRole(Role.valueOf(request.getRole().toString()));
             user.setProvider(Provider.Local);
             user.setCreatedAt(LocalDateTime.now());
             userRepository.save(user);

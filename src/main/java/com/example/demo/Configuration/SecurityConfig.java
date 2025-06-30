@@ -1,5 +1,6 @@
 package com.example.demo.Configuration;
 
+import com.example.demo.JWT.JwtAuthEntryPoint;
 import com.example.demo.JWT.JwtAuthenticationFilter;
 import com.example.demo.OAuth.CustomOAuthUserService;
 import com.example.demo.OAuth.OAuthSuccessHandler;
@@ -20,11 +21,13 @@ public class SecurityConfig  {
     private final CustomOAuthUserService oAuth2UserService;
     private final OAuthSuccessHandler oAuthSuccessHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthEntryPoint authEntryPoint;
 
-    public SecurityConfig(CustomOAuthUserService oAuth2UserService, OAuthSuccessHandler oAuthSuccessHandler, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(CustomOAuthUserService oAuth2UserService, OAuthSuccessHandler oAuthSuccessHandler, JwtAuthenticationFilter jwtAuthenticationFilter, JwtAuthEntryPoint authEntryPoint) {
         this.oAuth2UserService = oAuth2UserService;
         this.oAuthSuccessHandler = oAuthSuccessHandler;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.authEntryPoint = authEntryPoint;
     }
 
     @Bean
@@ -35,6 +38,9 @@ public class SecurityConfig  {
                         .requestMatchers("/api/student/**").hasRole("STUDENT")
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint(authEntryPoint)
                 )
                 .oauth2Login(oauth -> oauth
                         .userInfoEndpoint(userInfo -> userInfo

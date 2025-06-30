@@ -48,7 +48,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
             newUser.setEmail(email);
             newUser.setUsername(name);
             newUser.setProvider(Provider.Google);
-            newUser.setRole(Role.Student);
+            newUser.setRole(Role.STUDENT);
             newUser.setEmailVerified(true);
             newUser.setCreatedAt(LocalDateTime.now());
             newUser.setMobileNumber(mobileNumber);
